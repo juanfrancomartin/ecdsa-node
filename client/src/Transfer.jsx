@@ -1,26 +1,44 @@
 import { useState } from "react";
 import server from "./server";
+import {signMessage} from "../utils/signMessage";
 
-function Transfer({ address, setBalance }) {
+function Transfer({ address, setBalance, privateKey }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
 
   const setValue = (setter) => (evt) => setter(evt.target.value);
 
+  const stringifyBigInts = obj =>{
+    for(let prop in obj){
+      let value = obj[prop];
+      if(typeof value === 'bigint'){
+        obj[prop] = value.toString();
+      }else if(typeof value === 'object' && value !== null){
+        obj[prop] = stringifyBigInts(value);
+      }
+    }
+    return obj;
+  }
+
   async function transfer(evt) {
+    console.log("transfer", privateKey)
     evt.preventDefault();
 
     try {
+      const message = {amount: parseInt(sendAmount), recipient}
+      const signature = await signMessage(message, privateKey)
+      console.log("message", JSON.stringify(stringifyBigInts(signature)))
+      console.log("signature", signature)
       const {
         data: { balance },
       } = await server.post(`send`, {
-        sender: address,
-        amount: parseInt(sendAmount),
-        recipient,
+        signature: stringifyBigInts(signature),
+        message,
+        sender: address
       });
       setBalance(balance);
     } catch (ex) {
-      alert(ex.response.data.message);
+      alert(ex);
     }
   }
 
