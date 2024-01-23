@@ -9,9 +9,6 @@ For an overview of this project as well as getting started instructions, check o
 
 https://www.loom.com/share/0d3c74890b8e44a5918c4cacb3f646c4
 
-### Solution
-https://github.com/tomuky/ECDSA-NODE/tree/main
-
  
 ### Client
 

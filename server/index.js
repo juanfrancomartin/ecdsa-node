@@ -34,11 +34,9 @@ app.post("/send", async (req, res) => {
   const hashMessage = (message) => keccak256(Uint8Array.from(message));
   const isValid = secp256k1.verify(sig, hashMessage(message), sender) === true;
 
-  if(!isValid) res.status(400).send({ message: "Bad signature!"});
-
-  console.log("sender", sender);
-  console.log("recipient", recipient);
-  console.log("amount", amount);
+  if(!isValid) return res.status(400).send({ message: "Bad signature!"});
+  
+  if(!balances[recipient]) return res.status(400).send({ message: "Invalid recipient!"});
 
   setInitialBalance(sender);
   setInitialBalance(recipient);

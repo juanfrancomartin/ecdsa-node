@@ -21,14 +21,11 @@ function Transfer({ address, setBalance, privateKey }) {
   }
 
   async function transfer(evt) {
-    console.log("transfer", privateKey)
     evt.preventDefault();
 
     try {
       const message = {amount: parseInt(sendAmount), recipient}
       const signature = await signMessage(message, privateKey)
-      console.log("message", JSON.stringify(stringifyBigInts(signature)))
-      console.log("signature", signature)
       const {
         data: { balance },
       } = await server.post(`send`, {
@@ -38,7 +35,7 @@ function Transfer({ address, setBalance, privateKey }) {
       });
       setBalance(balance);
     } catch (ex) {
-      alert(ex);
+      alert(ex + (ex.response?.data?.message ? (': '+ex.response?.data?.message) : ''));
     }
   }
 
